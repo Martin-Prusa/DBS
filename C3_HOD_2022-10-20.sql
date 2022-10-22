@@ -15,13 +15,17 @@ FROM Osetrovatele AS Ote JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id
 WHERE D.nazev LIKE "snek";
 
 -- * Která zvířata jsou s láskou krmena stejným ošetřovatelem, jako vrabec Falco?
-SELECT Ote.jmeno
-FROM Zvirata AS Z JOIN Druhy AS D ON D.id = Z.druh
-					JOIN Ma_rad AS M ON M.druh = D.id
-                    JOIN Osetrovatele AS Ote ON Ote.id = M.osetrovatel
-                    JOIN Osetruje AS Oje ON Oje.zvire = Z.id AND Oje.osetrovatel = Ote.id
-GROUP BY Ote.id
-HAVING COUNT(Z.jmeno)  > 1;
+SELECT Z2.jmeno
+FROM Zvirata AS Z JOIN Osetruje AS Oje ON Oje.zvire = Z.id
+					JOIN Druhy AS D ON Z.druh = D.id
+                    JOIN Ma_rad AS M ON M.druh = D.id
+                    JOIN Osetrovatele AS Ote ON M.osetrovatel = Ote.id AND Oje.osetrovatel = Ote.id
+                    
+                    JOIN Zvirata AS Z2
+                    JOIN Ma_rad AS M2 ON M2.druh = Z2.druh
+                    JOIN Osetrovatele AS Ote2 ON Ote2.id = M2.osetrovatel
+                    JOIN Osetruje AS Oje2 ON Oje2.osetrovatel = Ote2.id AND Oje2.zvire = Z2.id
+WHERE Z.jmeno LIKE "Falco" AND D.nazev LIKE "vrabec" AND Ote.id = Ote2.id;
 
 SELECT Z.jmeno
 FROM Zvirata AS Z JOIN Druhy AS D ON D.id = Z.druh
