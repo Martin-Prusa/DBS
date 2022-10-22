@@ -14,6 +14,7 @@ LIMIT 1;
 
 -- Kolik různých druhů ošetřují jednotliví ošetřovatelé?
 SELECT Ote.jmeno, COUNT(DISTINCT D.id)
-FROM Druhy AS D JOIN Ma_rad AS M ON M.druh = D.id
-				JOIN Osetrovatele AS Ote ON M.osetrovatel = Ote.id
+FROM Osetrovatele AS Ote JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id
+						JOIN Zvirata AS Z ON Oje.zvire = Z.id
+                        JOIN Druhy AS D ON Z.druh = D.id
 GROUP BY Ote.id
