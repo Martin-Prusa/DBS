@@ -9,7 +9,7 @@ FROM Zvirata AS Z JOIN Druhy AS D ON D.id = Z.druh
 GROUP BY D.id;
 
 -- 3. Napište dotaz, jehož výsledkem budou všechna zvířata, která ošetřuje alespoň 5 ošetřovatelů - OK
-SELECT Z.jmeno
+SELECT DISTINCT(Z.id), Z.jmeno
 FROM Zvirata AS Z JOIN Osetruje AS Oje ON Oje.zvire = Z.id
 GROUP BY Z.id
 HAVING COUNT(Oje.id) >= 5;
@@ -21,7 +21,7 @@ FROM Osetrovatele AS Ote JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id
 WHERE Z.vaha >= 50 AND (Ote.jmeno LIKE "A%" OR Ote.jmeno LIKE "% A%");
 
 -- 5. Napište dotaz, jehož výsledkem bude seznam všech zvířat, které má rád někdo, kdo je současně ošetřuje. - 8 min - 121
-SELECT Z.jmeno
+SELECT DISTINCT Z.id, Z.jmeno
 FROM Zvirata AS Z JOIN Ma_rad AS M ON M.druh = Z.druh
 				JOIN Osetruje AS Oje ON M.osetrovatel = Oje.osetrovatel AND Z.id = Oje.zvire;
 
