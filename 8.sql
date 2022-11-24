@@ -1,4 +1,4 @@
-SELECT Z.jmeno
+SELECT Z.jmeno, z.narozen
 FROM Zvirata AS Z JOIN Osetruje AS Oje ON Oje.zvire = Z.id
 					JOIN Osetrovatele AS Ote ON Ote.id = Oje.osetrovatel
 GROUP BY Z.id
