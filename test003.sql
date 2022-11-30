@@ -13,8 +13,8 @@ GROUP BY Ote.id
 HAVING MAX(Z.narozen) < Ote.narozen;
 
 -- 3. Vypište, který druh má nejvyšší celkovou váhu ( = součet vah zvířat daného druhu je co nejvyšší)
-SELECT D.nazev 
+SELECT D.nazev , SUM(Z.vaha)
 FROM Druhy AS D JOIN Zvirata AS Z ON Z.druh = D.id
 GROUP BY D.id
-ORDER BY SUM(Z.id) DESC
+ORDER BY SUM(Z.vaha) DESC
 LIMIT 1;
