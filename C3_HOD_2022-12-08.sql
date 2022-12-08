@@ -8,3 +8,7 @@ SELECT Ote.jmeno
 FROM Osetrovatele AS Ote LEFT JOIN Osetruje AS Oje ON (Ote.id = Oje.osetrovatel)
 GROUP BY Ote.id
 HAVING COUNT(Oje.id) = 0;
+
+-- Pridani praopice
+INSERT INTO Druhy 
+VALUES (106, "praopice",0,0);
