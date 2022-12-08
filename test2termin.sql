@@ -24,7 +24,7 @@ FROM Osetrovatele AS Ote JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id
                         JOIN Druhy AS D ON Z.druh = D.id
 WHERE D.nazev LIKE "prase"
 GROUP BY Z.id;
-
+ 
 -- 4. Kolik prasat nedosauje jatecni vahu (87,5 kg)
 SELECT COUNT(Z.id)
 FROM Zvirata AS Z JOIN Druhy AS D ON Z.druh = D.id
