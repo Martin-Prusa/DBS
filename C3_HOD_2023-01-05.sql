@@ -1,4 +1,4 @@
--- ==== P ====
+-- ============================================================ P =================================================
 -- 1. Kolik druhů nikdo nemá rád? - 5
 SELECT COUNT(D.nazev) 
 FROM Druhy AS D LEFT JOIN Ma_Rad AS M ON M.druh = D.id
@@ -28,7 +28,7 @@ FROM Osetrovatele AS Ote JOIN Osetruje AS Oje ON Ote.id = Oje.osetrovatel
                         JOIN Zvirata AS Z ON M.druh = Z.druh
                         JOIN Osetruje AS Oje2 ON Oje2.osetrovatel = Ote.id;
                         
--- ==== Q ====
+-- ================================================================= Q ================================================================
 -- 1. Které druhy mají průměrnou váhu přes 50? - 104
 SELECT D.nazev
 FROM Druhy AS D JOIN Zvirata AS Z ON D.id = Z.druh
@@ -45,10 +45,21 @@ GROUP BY Ote.id
 ORDER BY COUNT(Z.id) DESC
 LIMIT 1;
 
--- 3. Vypište celkový počet "denních chodů" za předpokladu, že každý ošetřovatel nakrmí každého ze svých svěřenců 2x denně
+-- 3. Vypište celkový počet "denních chodů" za předpokladu, že každý ošetřovatel nakrmí každého ze svých svěřenců 2x denně - 9824
 SELECT COUNT(Oje.id) * 2
 FROM Osetruje AS Oje;
 
+
+-- ========================================================== R ========================================================
+-- 1. Kteří ošetřovatelé nemají rádi vrabce?
+SELECT Ote.jmeno
+FROM Osetrovatele AS Ote LEFT JOIN Ma_Rad AS M ON M.osetrovatel = Ote.id
+						LEFT JOIN Druhy AS D ON D.id = M.druh AND !D.nazev LIKE "vrabec"
+WHERE !(Ote.id IN (SELECT OteX.id
+FROM Osetrovatele AS OteX JOIN Ma_Rad AS MX ON MX.osetrovatel = OteX.id
+						JOIN Druhy AS DX ON DX.id = MX.druh
+WHERE DX.nazev LIKE "vrabec"))
+GROUP BY Ote.id;
 
 
 						
