@@ -12,7 +12,7 @@ FROM Zvirata AS Z JOIN Ma_Rad AS M ON M.druh = Z.druh
 WHERE Oje.id IS NULL;
 
 -- 3. * Neošetřovaná a současně nemilovaná zvířata ?
-SELECT Z.id, Z.jmeno
+SELECT Z.id, Z.jmeno -- 6
 FROM Zvirata AS Z LEFT JOIN Osetruje AS Oje ON Z.id = Oje.zvire
 					LEFT JOIN Ma_Rad AS M ON M.druh = Z.druh
 WHERE Oje.id IS NULL AND M.id IS NULL;
