@@ -1,0 +1,4 @@
+-- ==== V ====
+-- 1. Ke každému ošetřovateli vypište jméno nejtěžšího zvířete, které ošetřuje
+-- 2. Jméno a druh "prodatelných" zvířata (= nejstarší zvíře každého druhu, pokud bych prodejem daného zvířete nepřišel o posledního zástupce daného druhu)
+-- 3. * Vypište ošetřovatele, s nimiž si má Luke JANSA o čem popovídat (= mají rádi společně rádi alespoň jeden druh)
