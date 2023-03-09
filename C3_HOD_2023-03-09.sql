@@ -1,8 +1,9 @@
 -- ==== X ====
 -- 1. Ošetřovatele, kteří ošetřují dvě (nebo více) zvířat se shodným datem narození
 SELECT DISTINCT Ote.jmeno
-FROM Osetruje AS Oje JOIN Zvirata AS Z ON Oje.zvire = Z.id
-JOIN Osetrovatele AS Ote ON Ote.id = Oje.osetrovatel
+FROM Osetruje AS Oje
+         JOIN Zvirata AS Z ON Oje.zvire = Z.id
+         JOIN Osetrovatele AS Ote ON Ote.id = Oje.osetrovatel
 GROUP BY Z.narozen, Oje.osetrovatel
 HAVING COUNT(Z.id) > 1;
 
@@ -27,5 +28,15 @@ LIMIT 1;
 
 -- ==== Y ====
 -- 1. Pro každého ošetřovatele vypište nejstarší zvíře, které daný ošetřovatel NEošetřuje
+
 -- 2. Pro každého ošetřovatele vypište počet zvířat, které daný ošetřovatel neošetřuje, ale má je rád
+-- NEZKONTROLOVANO
+SELECT Ote.id, COUNT(Z.id)
+FROM Osetrovatele AS Ote
+JOIN Ma_rad AS M ON M.osetrovatel = Ote.id
+JOIN Zvirata Z on M.druh = Z.druh
+LEFT JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id AND Z.id = Oje.zvire
+WHERE Oje.id IS NULL
+GROUP BY Ote.id;
+
 -- 3. Data, v nichž se narodila pouze zvířata (tedy nějaké zvíře, ale žádný ošetřovatel)
