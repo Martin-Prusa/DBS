@@ -37,7 +37,6 @@ GROUP BY Ote.id;
 
 
 -- 2. Pro každého ošetřovatele vypište počet zvířat, které daný ošetřovatel neošetřuje, ale má je rád
--- NEZKONTROLOVANO
 SELECT Ote.id, COUNT(Z.id)
 FROM Osetrovatele AS Ote
          JOIN Ma_rad AS M ON M.osetrovatel = Ote.id
