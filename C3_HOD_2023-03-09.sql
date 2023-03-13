@@ -28,15 +28,42 @@ LIMIT 1;
 
 -- ==== Y ====
 -- 1. Pro každého ošetřovatele vypište nejstarší zvíře, které daný ošetřovatel NEošetřuje
+SELECT *
+FROM Osetrovatele AS Ote
+         LEFT JOIN Zvirata AS Z ON true
+WHERE Z.id NOT IN (SELECT Oje2.zvire
+                   FROM Osetruje AS Oje2
+                   WHERE Oje2.osetrovatel = Ote.id);
+
+
 
 -- 2. Pro každého ošetřovatele vypište počet zvířat, které daný ošetřovatel neošetřuje, ale má je rád
 -- NEZKONTROLOVANO
 SELECT Ote.id, COUNT(Z.id)
 FROM Osetrovatele AS Ote
-JOIN Ma_rad AS M ON M.osetrovatel = Ote.id
-JOIN Zvirata Z on M.druh = Z.druh
-LEFT JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id AND Z.id = Oje.zvire
+         JOIN Ma_rad AS M ON M.osetrovatel = Ote.id
+         JOIN Zvirata Z on M.druh = Z.druh
+         LEFT JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id AND Z.id = Oje.zvire
 WHERE Oje.id IS NULL
 GROUP BY Ote.id;
 
 -- 3. Data, v nichž se narodila pouze zvířata (tedy nějaké zvíře, ale žádný ošetřovatel)
+
+-- ==== Z ==== ( Bonbónkové úkoly )
+-- 1. Vypište nejplodnější den v týdnu (tzn. den v týdnu: Pondělí, úterý..., kdy se narodilo nejvíce zvířat). Nezáleží na tom, jakým jazykem nebo jestli to bude zkratka
+-- pouze 1
+SELECT DAYNAME(Z.narozen) AS den
+FROM Zvirata AS Z
+GROUP BY den
+ORDER BY COUNT(Z.id) DESC
+LIMIT 1;
+
+-- pokud by se narodilo stejne zvirat ve vice dnech
+SELECT DAYNAME(Z.narozen) AS den
+FROM Zvirata AS Z
+GROUP BY den
+HAVING COUNT(Z.id) = (SELECT COUNT(Z.id) as pocet
+                      FROM Zvirata AS Z
+                      GROUP BY DAYNAME(Z.narozen)
+                      ORDER BY pocet DESC
+                      LIMIT 1);
