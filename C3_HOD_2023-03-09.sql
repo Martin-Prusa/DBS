@@ -28,12 +28,11 @@ LIMIT 1;
 
 -- ==== Y ====
 -- 1. Pro každého ošetřovatele vypište nejstarší zvíře, které daný ošetřovatel NEošetřuje
-SELECT *
-FROM Osetrovatele AS Ote
-         LEFT JOIN Zvirata AS Z ON true
-WHERE Z.id NOT IN (SELECT Oje2.zvire
+SELECT Ote.id AS ote, MIN(Z.narozen)
+FROM Osetrovatele AS Ote JOIN Zvirata AS Z ON Z.id NOT IN (SELECT Oje2.zvire
                    FROM Osetruje AS Oje2
-                   WHERE Oje2.osetrovatel = Ote.id);
+                   WHERE Oje2.osetrovatel = Ote.id)
+GROUP BY Ote.id;
 
 
 
@@ -48,6 +47,12 @@ WHERE Oje.id IS NULL
 GROUP BY Ote.id;
 
 -- 3. Data, v nichž se narodila pouze zvířata (tedy nějaké zvíře, ale žádný ošetřovatel)
+SELECT Z.narozen
+FROM Zvirata AS Z
+WHERE Z.narozen NOT IN (
+    SELECT Ote.narozen
+    FROM Osetrovatele AS Ote
+    );
 
 -- ==== Z ==== ( Bonbónkové úkoly )
 -- 1. Vypište nejplodnější den v týdnu (tzn. den v týdnu: Pondělí, úterý..., kdy se narodilo nejvíce zvířat). Nezáleží na tom, jakým jazykem nebo jestli to bude zkratka
