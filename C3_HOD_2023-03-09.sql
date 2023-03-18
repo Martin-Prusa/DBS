@@ -31,13 +31,13 @@ LIMIT 1;
 SELECT Ote.id, Z.id
 FROM Osetrovatele AS Ote
 JOIN (
-	SELECT Ote.id AS ote, MIN(Z.narozen) AS minNar
+	SELECT Ote.id AS otex, MIN(Z.narozen) AS minNar
 	FROM Osetrovatele AS Ote
 	CROSS JOIN Zvirata Z
 	LEFT JOIN Osetruje AS Oje ON Z.id = Oje.zvire AND Oje.osetrovatel = Ote.id
 	WHERE Oje.id IS NULL
 	GROUP BY Ote.id
-) AS nejstarsi ON nejstarsi.ote = Ote.id
+) AS nejstarsi ON nejstarsi.otex = Ote.id
 JOIN Zvirata Z ON Z.narozen = nejstarsi.minNar
 LEFT JOIN Osetruje AS Oje ON Z.id = Oje.zvire AND Oje.osetrovatel = Ote.id
 WHERE Oje.id IS NULL;
