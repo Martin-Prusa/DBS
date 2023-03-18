@@ -28,12 +28,19 @@ LIMIT 1;
 
 -- ==== Y ====
 -- 1. Pro každého ošetřovatele vypište nejstarší zvíře, které daný ošetřovatel NEošetřuje
-SELECT Ote.id AS ote, MIN(Z.narozen)
-FROM Osetrovatele AS Ote JOIN Zvirata AS Z ON Z.id NOT IN (SELECT Oje2.zvire
-                   FROM Osetruje AS Oje2
-                   WHERE Oje2.osetrovatel = Ote.id)
-GROUP BY Ote.id;
-
+SELECT Ote.id, Z.id
+FROM Osetrovatele AS Ote
+JOIN (
+	SELECT Ote.id AS ote, MIN(Z.narozen) AS minNar
+	FROM Osetrovatele AS Ote
+	CROSS JOIN Zvirata Z
+	LEFT JOIN Osetruje AS Oje ON Z.id = Oje.zvire AND Oje.osetrovatel = Ote.id
+	WHERE Oje.id IS NULL
+	GROUP BY Ote.id
+) AS nejstarsi ON nejstarsi.ote = Ote.id
+JOIN Zvirata Z ON Z.narozen = nejstarsi.minNar
+LEFT JOIN Osetruje AS Oje ON Z.id = Oje.zvire AND Oje.osetrovatel = Ote.id
+WHERE Oje.id IS NULL;
 
 
 -- 2. Pro každého ošetřovatele vypište počet zvířat, které daný ošetřovatel neošetřuje, ale má je rád
@@ -47,7 +54,7 @@ GROUP BY Ote.id;
 
 -- 3. Data, v nichž se narodila pouze zvířata (tedy nějaké zvíře, ale žádný ošetřovatel)
 SELECT Z.narozen
-FROM Zvirata AS Z
+FROM Zvirata AS  Z
 WHERE Z.narozen NOT IN (
     SELECT Ote.narozen
     FROM Osetrovatele AS Ote
