@@ -46,14 +46,14 @@ WHERE Oje.id IS NULL;
 -- 2. Pro každého ošetřovatele vypište počet zvířat, které daný ošetřovatel neošetřuje, ale má je rád
 SELECT Ote.id, COUNT(Z.id)
 FROM Osetrovatele AS Ote
-         JOIN Ma_rad AS M ON M.osetrovatel = Ote.id
-         JOIN Zvirata Z on M.druh = Z.druh
+         LEFT JOIN Ma_rad AS M ON M.osetrovatel = Ote.id
+         LEFT JOIN Zvirata Z on M.druh = Z.druh
          LEFT JOIN Osetruje AS Oje ON Oje.osetrovatel = Ote.id AND Z.id = Oje.zvire
 WHERE Oje.id IS NULL
 GROUP BY Ote.id;
 
 -- 3. Data, v nichž se narodila pouze zvířata (tedy nějaké zvíře, ale žádný ošetřovatel)
-SELECT Z.narozen
+SELECT DISTINCT Z.narozen
 FROM Zvirata AS  Z
 WHERE Z.narozen NOT IN (
     SELECT Ote.narozen
