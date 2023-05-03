@@ -11,6 +11,23 @@ GROUP BY Z.druh
 HAVING AVG(Z.vaha) > 50;
 
 -- 2. Všechny staré ošetřovatele, kteří ošetřují pouze těžké druhy.
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+         JOIN (SELECT Ote.id AS ote, COUNT(Oje.id) AS pocet
+               FROM Osetrovatele Ote
+                        JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+               WHERE Ote.narozen < '1981-01-01'
+               GROUP BY Ote.id) AS stariCelkem ON stariCelkem.ote = Ote.id
+         JOIN (SELECT Ote.id AS ote, COUNT(Z.id) AS pocet
+               FROM Osetrovatele Ote
+                        JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+                        JOIN Zvirata Z ON Z.id = Oje.zvire
+               WHERE Z.druh IN (SELECT Z.druh
+                                FROM Zvirata Z
+                                GROUP BY Z.druh
+                                HAVING AVG(Z.vaha) > 50)
+               GROUP BY Ote.id) AS tezkych ON tezkych.ote = Ote.id
+WHERE tezkych.pocet = stariCelkem.pocet;
 
 -- 3. Všechny ošetřovatele, kteří mají rádi „nejkrmenější“ zvíře (tzn. zvíře, které krmi nejvíce ošetřovatelů)
 SELECT DISTINCT Ote.id, Ote.jmeno
