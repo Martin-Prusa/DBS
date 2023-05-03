@@ -13,5 +13,18 @@ HAVING AVG(Z.vaha) > 50;
 -- 2. Všechny staré ošetřovatele, kteří ošetřují pouze těžké druhy.
 
 -- 3. Všechny ošetřovatele, kteří mají rádi „nejkrmenější“ zvíře (tzn. zvíře, které krmi nejvíce ošetřovatelů)
+SELECT DISTINCT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+         JOIN Ma_rad M ON M.osetrovatel = Ote.id
+WHERE M.druh IN (SELECT Z.druh
+                 FROM Zvirata Z
+                          JOIN Osetruje Oje ON Oje.zvire = Z.id
+                 GROUP BY Z.id
+                 HAVING COUNT(Oje.id) = (SELECT COUNT(Oje.id)
+                                         FROM Zvirata Z
+                                                  JOIN Osetruje Oje ON Oje.zvire = Z.id
+                                         GROUP BY Z.id
+                                         ORDER BY COUNT(Oje.id) DESC
+                                         LIMIT 1));
 
 -- 4. Fitness trenér: Vypište ošetřovatele, kteří ošetřují alespoň jedno nejlehčí zvíře z některého druhu, který má daný ošetřovatel rád.
