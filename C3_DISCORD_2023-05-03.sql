@@ -45,3 +45,10 @@ WHERE M.druh IN (SELECT Z.druh
                                          LIMIT 1));
 
 -- 4. Fitness trenér: Vypište ošetřovatele, kteří ošetřují alespoň jedno nejlehčí zvíře z některého druhu, který má daný ošetřovatel rád.
+SELECT M.osetrovatel
+FROM Zvirata Z
+         JOIN (SELECT Z.druh AS druh, MIN(Z.vaha) AS vaha
+               FROM Zvirata Z
+               GROUP BY Z.druh) nejlehci ON nejlehci.druh = Z.druh AND Z.vaha = nejlehci.vaha
+JOIN Ma_rad M ON Z.druh = M.druh
+JOIN Osetruje Oje ON Oje.zvire = Z.id AND M.osetrovatel = Oje.osetrovatel;
