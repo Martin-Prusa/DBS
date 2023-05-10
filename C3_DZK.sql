@@ -1,8 +1,8 @@
 -- 1. Vypište jména ošetřovatelů, kteří ošetřují alespoň dvě zvířata od stejného druhu.
-SELECT DISTINCT Ote.id, Ote.jmeno, COUNT(Z.id) pocet
+SELECT Ote.id, Ote.jmeno, COUNT(Z.id) pocet
 FROM Osetrovatele Ote
-JOIN Osetruje Oje ON Ote.id = Oje.osetrovatel
-JOIN Zvirata Z ON Z.id = Oje.zvire
+         JOIN Osetruje Oje ON Ote.id = Oje.osetrovatel
+         JOIN Zvirata Z ON Z.id = Oje.zvire
 GROUP BY Ote.id, Z.druh
 HAVING pocet >= 2;
 
@@ -10,6 +10,15 @@ HAVING pocet >= 2;
 -- ošetřuje alespoň dvě zvířata takového druhu.
 -- Pro lepší pochopení: Žádá se totéž co ve cvičení č. 1, akorát takových druhů musí ošetřovatel
 -- ošetřovat více.
+SELECT pocty.id, pocty.jmeno
+FROM (SELECT Ote.id, Ote.jmeno, COUNT(Z.id) pocet
+      FROM Osetrovatele Ote
+               JOIN Osetruje Oje ON Ote.id = Oje.osetrovatel
+               JOIN Zvirata Z ON Z.id = Oje.zvire
+      GROUP BY Ote.id, Z.druh
+      HAVING pocet >= 2) pocty
+GROUP BY pocty.id
+HAVING COUNT(pocty.jmeno) >= 2;
 
 -- 3. Vypište takové ošetřovatele, kteří neošetřují žádné zvíře starší než on sám.
 
