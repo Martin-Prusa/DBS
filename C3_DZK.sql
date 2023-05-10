@@ -29,7 +29,11 @@ WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
                               JOIN Zvirata Z ON Z.id = Oje.zvire
                      WHERE Z.narozen < Ote.narozen);
 
--- 4. Vypište zvířata, která nikdo neošetřuje.
+-- 4. Vypište zvířata, která nikdo neošetřuje. -- 171
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+LEFT JOIN Osetruje Oje ON Oje.zvire = Z.id
+WHERE Oje.id IS NULL;
 
 -- 5. Vypište data, kdy se narodilo nějaké zvíře, ale žádný ošetřovatel.
 
