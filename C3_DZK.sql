@@ -43,6 +43,22 @@ WHERE zn.narozen NOT IN (SELECT Ote.narozen
                          FROM Osetrovatele Ote);
 
 -- 6. Pro každý druh vypište jméno nejtěžšího a nejlehčího zvířete
+SELECT D.nazev, minimalni.jmeno AS nejlehci, maximalni.jmeno AS nejtezsi
+FROM Druhy D
+         JOIN (SELECT Z.druh, Z.jmeno
+               FROM Zvirata Z
+                        JOIN (SELECT Z.druh, MIN(Z.vaha) AS vaha
+                              FROM Zvirata Z
+                              GROUP BY Z.druh) AS minVaha ON minVaha.druh = Z.druh AND Z.vaha = minVaha.vaha) minimalni
+              ON minimalni.druh = D.id
+         JOIN (SELECT Z.druh, Z.jmeno
+               FROM Zvirata Z
+                        JOIN (SELECT Z.druh, MAX(Z.vaha) AS vaha
+                              FROM Zvirata Z
+                              GROUP BY Z.druh) AS maxVaha ON maxVaha.druh = Z.druh AND Z.vaha = maxVaha.vaha) maximalni
+              ON maximalni.druh = D.id;
+
+
 
 -- 7. Vypište všechna zvířata, která mají váhu nižší, než je průměrná váha druhu, ke kterému
 -- náleží
