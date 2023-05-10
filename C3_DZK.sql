@@ -61,7 +61,7 @@ FROM Druhy D
 
 
 -- 7. Vypište všechna zvířata, která mají váhu nižší, než je průměrná váha druhu, ke kterému
--- náleží
+-- náleží - 1020
 SELECT Z.id, Z.jmeno
 FROM Zvirata Z
 JOIN (
