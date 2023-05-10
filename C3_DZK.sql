@@ -32,10 +32,15 @@ WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
 -- 4. Vypište zvířata, která nikdo neošetřuje. -- 171
 SELECT Z.id, Z.jmeno
 FROM Zvirata Z
-LEFT JOIN Osetruje Oje ON Oje.zvire = Z.id
+         LEFT JOIN Osetruje Oje ON Oje.zvire = Z.id
 WHERE Oje.id IS NULL;
 
--- 5. Vypište data, kdy se narodilo nějaké zvíře, ale žádný ošetřovatel.
+-- 5. Vypište data, kdy se narodilo nějaké zvíře, ale žádný ošetřovatel. - 1928
+SELECT zn.narozen
+FROM (SELECT DISTINCT Z.narozen
+      FROM Zvirata Z) zn
+WHERE zn.narozen NOT IN (SELECT Ote.narozen
+                         FROM Osetrovatele Ote);
 
 -- 6. Pro každý druh vypište jméno nejtěžšího a nejlehčího zvířete
 
