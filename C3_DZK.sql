@@ -1,4 +1,10 @@
 -- 1. Vypište jména ošetřovatelů, kteří ošetřují alespoň dvě zvířata od stejného druhu.
+SELECT DISTINCT Ote.id, Ote.jmeno, COUNT(Z.id) pocet
+FROM Osetrovatele Ote
+JOIN Osetruje Oje ON Ote.id = Oje.osetrovatel
+JOIN Zvirata Z ON Z.id = Oje.zvire
+GROUP BY Ote.id, Z.druh
+HAVING pocet >= 2;
 
 -- 2. Vypište jména ošetřovatelů, kteří ošetřují alespoň dva druhy takové, že příslušný ošetřovatel
 -- ošetřuje alespoň dvě zvířata takového druhu.
