@@ -62,6 +62,14 @@ FROM Druhy D
 
 -- 7. Vypište všechna zvířata, která mají váhu nižší, než je průměrná váha druhu, ke kterému
 -- náleží
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+JOIN (
+    SELECT Z.druh AS druh, AVG(Z.vaha) AS prumer
+FROM Zvirata Z
+GROUP BY Z.druh
+) prumery ON Z.druh = prumery.druh
+WHERE Z.vaha < prumery.prumer;
 
 -- 8. Ke každému ošetřovateli vypište nejmladší zvíře, které má rád a které je starší než on sám
 
