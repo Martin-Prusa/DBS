@@ -32,7 +32,7 @@ SELECT D.nazev, pocty.druh, AVG(pocty.pocet) AS prumer
 FROM Druhy D
 JOIN (SELECT Z.druh AS druh, COUNT(Oje.id) AS pocet
       FROM Zvirata Z
-               JOIN Osetruje Oje ON Oje.zvire = Z.id
+               LEFT JOIN Osetruje Oje ON Oje.zvire = Z.id
       GROUP BY Z.id) AS pocty ON D.id = pocty.druh
 GROUP BY pocty.druh
 ORDER BY prumer DESC
