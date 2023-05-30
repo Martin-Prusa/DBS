@@ -120,10 +120,19 @@ GROUP BY Oje.osetrovatel
 HAVING pocet = (SELECT COUNT(Z.id)
                 FROM Zvirata Z
                          JOIN Druhy D ON D.id = Z.druh
-                WHERE D.nazev LIKE 'zajic')
+                WHERE D.nazev LIKE 'zajic');
 
 -- 12. Vypište ošetřovatele, který nemá rád žádné ze zvířat, které ošetřuje (zvířata, která
 -- neošetřuje, rád mít může).
+SELECT Ote.id
+FROM Osetrovatele Ote
+WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
+                     FROM Osetrovatele Ote
+                              JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+                              JOIN Ma_rad M ON M.osetrovatel = Ote.id
+                              JOIN Zvirata Z ON Z.id = Oje.zvire AND Z.druh = M.druh);
+
+
 
 -- 13. Vypište ošetřovatele, který má rád všechna zvířata, která ošetřuje (pokud má rád i nějaké
 -- další, která neošetřuje, nevadí to).
