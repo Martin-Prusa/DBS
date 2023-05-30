@@ -97,6 +97,16 @@ HAVING pocet = (SELECT COUNT(Oje.id) AS pocet
 
 -- 10. Ke každému ošetřovateli vypište nejmladší ze zvířat, které ošetřuje a které je starší než
 -- příslušný ošetřovatel.
+SELECT Ote.id, Z.id
+FROM Osetrovatele Ote
+         JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+         JOIN Zvirata Z ON Z.id = Oje.zvire
+         JOIN (SELECT Ote.id o, MAX(Z.narozen) nar
+               FROM Osetrovatele Ote
+                        JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+                        JOIN Zvirata Z ON Z.id = Oje.zvire
+               WHERE Z.narozen < Ote.narozen
+               GROUP BY Ote.id) maxNar ON maxNar.o = Ote.id AND Z.narozen = maxNar.nar;
 
 -- 11. Vypište všechny ošetřovatele, kteří ošetřují všechny zajíce.
 -- Pokud by ošetřovatel měl rád i další zvířata jiných druhů, není to na škodu; podstatné je, že
