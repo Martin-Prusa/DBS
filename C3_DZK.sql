@@ -64,16 +64,36 @@ FROM Druhy D
 -- náleží - 1020
 SELECT Z.id, Z.jmeno
 FROM Zvirata Z
-JOIN (
-    SELECT Z.druh AS druh, AVG(Z.vaha) AS prumer
-FROM Zvirata Z
-GROUP BY Z.druh
-) prumery ON Z.druh = prumery.druh
+         JOIN (SELECT Z.druh AS druh, AVG(Z.vaha) AS prumer
+               FROM Zvirata Z
+               GROUP BY Z.druh) prumery ON Z.druh = prumery.druh
 WHERE Z.vaha < prumery.prumer;
 
 -- 8. Ke každému ošetřovateli vypište nejmladší zvíře, které má rád a které je starší než on sám
+SELECT Ote.id, Z.id
+FROM Osetrovatele Ote
+         JOIN Ma_rad M ON M.osetrovatel = Ote.id
+         JOIN Zvirata Z ON Z.druh = M.druh
+         JOIN (SELECT Ote.id o, MAX(Z.narozen) nar
+               FROM Osetrovatele Ote
+                        JOIN Ma_rad M ON M.osetrovatel = Ote.id
+                        JOIN Zvirata Z ON Z.druh = M.druh
+               WHERE Z.narozen < Ote.narozen
+               GROUP BY Ote.id) maxNar ON maxNar.o = Ote.id AND Z.narozen = maxNar.nar;
+
 
 -- 9. Vypište nejošetřovávanější zvíře. Pokud je takových zvířat více, zajímají nás všechna.
+SELECT Z.id, COUNT(Oje.id) pocet
+FROM Zvirata Z
+         JOIN Osetruje Oje ON Oje.zvire = Z.id
+GROUP BY Z.id
+HAVING pocet = (SELECT COUNT(Oje.id) AS pocet
+                FROM Zvirata Z
+                         JOIN Osetruje Oje ON Oje.zvire = Z.id
+                GROUP BY Z.id
+                ORDER BY pocet DESC
+                LIMIT 1);
+
 
 -- 10. Ke každému ošetřovateli vypište nejmladší ze zvířat, které ošetřuje a které je starší než
 -- příslušný ošetřovatel.
