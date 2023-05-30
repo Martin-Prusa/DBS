@@ -101,6 +101,16 @@ HAVING pocet = (SELECT COUNT(Oje.id) AS pocet
 -- 11. Vypište všechny ošetřovatele, kteří ošetřují všechny zajíce.
 -- Pokud by ošetřovatel měl rád i další zvířata jiných druhů, není to na škodu; podstatné je, že
 -- má rád všechny zajíce.
+SELECT Oje.osetrovatel AS oset, COUNT(Z.id) pocet
+FROM Osetruje Oje
+         JOIN Zvirata Z ON Oje.zvire = Z.id
+         JOIN Druhy D ON Z.druh = D.id
+WHERE D.nazev LIKE 'zajic'
+GROUP BY Oje.osetrovatel
+HAVING pocet = (SELECT COUNT(Z.id)
+                FROM Zvirata Z
+                         JOIN Druhy D ON D.id = Z.druh
+                WHERE D.nazev LIKE 'zajic')
 
 -- 12. Vypište ošetřovatele, který nemá rád žádné ze zvířat, které ošetřuje (zvířata, která
 -- neošetřuje, rád mít může).
