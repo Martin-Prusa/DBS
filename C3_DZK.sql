@@ -136,6 +136,16 @@ WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
 
 -- 13. Vypište ošetřovatele, který má rád všechna zvířata, která ošetřuje (pokud má rád i nějaké
 -- další, která neošetřuje, nevadí to).
+SELECT Ote.id
+FROM Osetrovatele Ote
+JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
+                     FROM Osetrovatele Ote
+                              JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+                              JOIN Zvirata Z ON Oje.zvire = Z.id
+                              LEFT JOIN Ma_rad M ON M.osetrovatel = Ote.id AND M.druh = Z.druh
+                     WHERE M.id IS NULL);
+
 
 -- 14. Vypište všechna zvířata, která nemá rád ošetřovatel Juhani Lorenc a jsou těžší než 100.
 
