@@ -155,13 +155,28 @@ WHERE Z.id NOT IN (SELECT Z.id
                             JOIN Ma_rad M ON M.druh = Z.druh
                             JOIN Osetrovatele Ote ON Ote.id = M.osetrovatel
                    WHERE Ote.jmeno LIKE 'Juhani Lorenc')
-  AND Z.vaha > 100
+  AND Z.vaha > 100;
 
 -- 15. Vypište všechna zvířata, která ošetřují pouze děti (tzn. všichni ošetřovatelé musí být ročník
 -- 2005 a mladší).
 -- Poznámka: Lidem narozeným v r. 2004 letos 18 bylo nebo teprve bude. Protože funkce pro
 -- manipulaci s datem a časem nebyly letos probrány, ročník 2004 pro jednoduchost
 -- zanedbáme a budeme osoby narozené v r. 2004 posuzovat všechny jako již dospělé.
+SELECT Z.id, Z.jmeno
+FROM Zvirata AS Z
+         JOIN (SELECT Z.id, COUNT(Ote.id) AS pocet
+               FROM Zvirata Z
+                        JOIN Osetruje Oje ON Z.id = Oje.zvire
+                        JOIN Osetrovatele Ote ON Ote.id = Oje.osetrovatel
+               GROUP BY Z.id) AS nor ON nor.id = Z.id
+         JOIN (SELECT Z.id, COUNT(Ote.id) AS deti
+               FROM Zvirata Z
+                        JOIN Osetruje Oje ON Z.id = Oje.zvire
+                        JOIN Osetrovatele Ote ON Ote.id = Oje.osetrovatel
+               WHERE Ote.narozen > '2004-12-31'
+               GROUP BY Z.id)
+    AS deti ON Z.id = deti.id
+WHERE deti.deti = nor.pocet;
 
 -- 16. Všechny milovníky starých zvířat (takové ošetřovatele, kteří jsou mladší než každé zvíře,
 -- které mají rádi)
