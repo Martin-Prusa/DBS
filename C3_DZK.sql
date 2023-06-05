@@ -229,6 +229,15 @@ HAVING COUNT(Z.id) > (SELECT AVG(c.c)
 -- 23. Všechny hladomory
 -- Def: Hladomorem nazveme takového ošetřovatele, který ošetřuje alespoň jedno zvíře, které je nejlehčí
 -- svého druhu
+SELECT DISTINCT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+         JOIN Osetruje Oje ON Ote.id = Oje.osetrovatel
+         JOIN (SELECT Z.id
+               FROM Zvirata Z
+                        JOIN (SELECT Z.druh, MIN(Z.vaha) AS vaha
+                              FROM Zvirata Z
+                              GROUP BY Z.druh) AS m ON Z.druh = m.druh AND Z.vaha = m.vaha) AS minV
+              ON minV.id = Oje.zvire;
 
 -- 24. Nadprůměrně těžké druhy
 -- Vahou druhu chápeme váhový průměr všech jeho zvířat. Nadprůměrně těžké druhy jsou takové druhy,
