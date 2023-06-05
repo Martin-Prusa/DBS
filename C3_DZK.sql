@@ -180,6 +180,20 @@ WHERE deti.deti = nor.pocet;
 
 -- 16. Všechny milovníky starých zvířat (takové ošetřovatele, kteří jsou mladší než každé zvíře,
 -- které mají rádi)
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+         JOIN (SELECT Ote.id, COUNT(Z.id) AS starsich
+               FROM Osetrovatele Ote
+                        JOIN Ma_rad M ON M.osetrovatel = Ote.id
+                        JOIN Zvirata Z on M.druh = Z.druh
+               WHERE Ote.narozen > Z.narozen
+               GROUP BY Ote.id) AS st ON st.id = Ote.id
+         JOIN (SELECT Ote.id, COUNT(Z.id) AS celkem
+               FROM Osetrovatele Ote
+                        JOIN Ma_rad M ON M.osetrovatel = Ote.id
+                        JOIN Zvirata Z on M.druh = Z.druh
+               GROUP BY Ote.id) AS vsech ON vsech.id = Ote.id
+WHERE st.starsich = vsech.celkem;
 
 -- 17. Všechna zvířata, která neošetřuje nikdo, jehož jméno obsahuje písmeno „X“
 
