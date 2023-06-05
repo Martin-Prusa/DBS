@@ -196,6 +196,14 @@ FROM Osetrovatele Ote
 WHERE st.starsich = vsech.celkem;
 
 -- 17. Všechna zvířata, která neošetřuje nikdo, jehož jméno obsahuje písmeno „X“
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+WHERE Z.id NOT IN (SELECT Z.id
+                   FROM Zvirata Z
+                            JOIN Osetruje Oje ON Oje.zvire = Z.id
+                            JOIN Osetrovatele Ote ON Oje.osetrovatel = Ote.id
+                   WHERE Ote.jmeno LIKE '%x%'
+                      OR Ote.jmeno LIKE '%X%');
 
 -- 18. Všechny přemnožené druhy ( = druhy, jejichž populace je větší, než průměrná populace
 -- druhu)
