@@ -138,7 +138,7 @@ WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
 -- další, která neošetřuje, nevadí to).
 SELECT Ote.id
 FROM Osetrovatele Ote
-JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+         JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
 WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
                      FROM Osetrovatele Ote
                               JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
@@ -148,6 +148,14 @@ WHERE Ote.id NOT IN (SELECT DISTINCT Ote.id
 
 
 -- 14. Vypište všechna zvířata, která nemá rád ošetřovatel Juhani Lorenc a jsou těžší než 100.
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+WHERE Z.id NOT IN (SELECT Z.id
+                   FROM Zvirata Z
+                            JOIN Ma_rad M ON M.druh = Z.druh
+                            JOIN Osetrovatele Ote ON Ote.id = M.osetrovatel
+                   WHERE Ote.jmeno LIKE 'Juhani Lorenc')
+  AND Z.vaha > 100
 
 -- 15. Vypište všechna zvířata, která ošetřují pouze děti (tzn. všichni ošetřovatelé musí být ročník
 -- 2005 a mladší).
