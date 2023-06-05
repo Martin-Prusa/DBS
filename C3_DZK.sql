@@ -207,6 +207,14 @@ WHERE Z.id NOT IN (SELECT Z.id
 
 -- 18. Všechny přemnožené druhy ( = druhy, jejichž populace je větší, než průměrná populace
 -- druhu)
+SELECT D.id, D.nazev
+FROM Druhy D
+         JOIN Zvirata Z ON Z.druh = D.id
+GROUP BY D.id
+HAVING COUNT(Z.id) > (SELECT AVG(c.c)
+                      FROM (SELECT COUNT(Z.id) as c
+                            FROM Zvirata Z
+                            GROUP BY Z.druh) AS c);
 
 -- 19. Všechny ošetřovatele, kteří neošetřují staré holuby
 
