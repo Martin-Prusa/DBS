@@ -223,6 +223,13 @@ HAVING COUNT(Z.id) > (SELECT AVG(c.c)
 -- 21. “Prodatelná” zvířata
 -- (nejmladší zvíře každého druhu, s výjimkou těch, kde by populace po prodeji klesla pod 10
 -- jedinců)
+SELECT MIN(Z.id)
+FROM Zvirata Z
+         JOIN (SELECT MAX(Z.narozen) AS nar, Z.druh, COUNT(Z.id) AS pocet
+               FROM Zvirata Z
+               GROUP BY Z.druh
+               HAVING pocet > 10) maxNar ON Z.druh = maxNar.druh AND Z.narozen = maxNar.nar
+GROUP BY Z.druh;
 
 -- 22. Všechny ošetřovatele, kteří neošetřují žádné zvíře, které mají rádi
 SELECT Ote.id
