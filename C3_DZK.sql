@@ -225,6 +225,23 @@ HAVING COUNT(Z.id) > (SELECT AVG(c.c)
 -- jedinců)
 
 -- 22. Všechny ošetřovatele, kteří neošetřují žádné zvíře, které mají rádi
+SELECT Ote.id
+FROM Osetrovatele Ote
+         JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+         LEFT JOIN (SELECT M.osetrovatel, Z.id zvire
+                    FROM Ma_rad M
+                             JOIN Zvirata Z on M.druh = Z.druh) mazvire
+                   ON Oje.zvire = mazvire.zvire AND mazvire.osetrovatel = Oje.osetrovatel
+GROUP BY Ote.id
+HAVING COUNT(mazvire.osetrovatel) = 0;
+
+SELECT Ote.id
+FROM Osetrovatele Ote
+         JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+         JOIN Zvirata Z ON Oje.zvire = Z.id
+         LEFT JOIN Ma_rad M ON Z.druh = M.druh AND M.osetrovatel = Oje.osetrovatel
+GROUP BY Ote.id
+HAVING COUNT(M.osetrovatel) = 0;
 
 -- 23. Všechny hladomory
 -- Def: Hladomorem nazveme takového ošetřovatele, který ošetřuje alespoň jedno zvíře, které je nejlehčí
@@ -245,47 +262,48 @@ FROM Osetrovatele Ote
 -- nezahrnujte.
 SELECT D.id, D.nazev
 FROM Druhy D
-JOIN (SELECT Z.druh, AVG(Z.vaha) AS vaha
-FROM Zvirata Z
-GROUP BY Z.druh) AS avgVahy ON avgVahy.druh = D.id
+         JOIN (SELECT Z.druh, AVG(Z.vaha) AS vaha
+               FROM Zvirata Z
+               GROUP BY Z.druh) AS avgVahy ON avgVahy.druh = D.id
 WHERE avgVahy.vaha > (SELECT AVG(prumerne.vaha)
-FROM (SELECT Z.druh, AVG(Z.vaha) AS vaha
-FROM Zvirata Z
-GROUP BY Z.druh) prumerne);
+                      FROM (SELECT Z.druh, AVG(Z.vaha) AS vaha
+                            FROM Zvirata Z
+                            GROUP BY Z.druh) prumerne);
 
 -- 25. Všechny ošetřovatele, kteří ošetřují pouze pštrosy.
 SELECT Ote.id, Ote.jmeno
 FROM Osetrovatele Ote
-JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
-JOIN Zvirata Z ON Z.id = Oje.zvire
-LEFT JOIN Druhy D ON D.id = Z.druh AND D.nazev NOT LIKE 'pstros'
+         JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+         JOIN Zvirata Z ON Z.id = Oje.zvire
+         LEFT JOIN Druhy D ON D.id = Z.druh AND D.nazev NOT LIKE 'pstros'
 GROUP BY Ote.id
 HAVING COUNT(D.id) = 0;
 
 -- 26. Vyhynulé druhy (nemají žádné zvíře)
 SELECT D.nazev
 FROM Druhy D
-LEFT JOIN Zvirata Z ON Z.druh = D.id
+         LEFT JOIN Zvirata Z ON Z.druh = D.id
 WHERE Z.id IS NULL;
 
 -- 27. Všechna zvířata, která nemá nikdo rád
 SELECT Z.id, Z.jmeno
 FROM Zvirata Z
-LEFT JOIN Ma_rad M on Z.druh = M.druh
+         LEFT JOIN Ma_rad M on Z.druh = M.druh
 WHERE M.id IS NULL;
 
 -- 28. Všechny ošetřovatele, kteří nikoho neošetřují
 SELECT Ote.id, Ote.jmeno
 FROM Osetrovatele Ote
-LEFT JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+         LEFT JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
 WHERE Oje.id IS NULL;
 
 -- 29. Všechny kachny, které nemá nikdo rád
 SELECT Z.id, Z.jmeno
 FROM Zvirata Z
-JOIN Druhy D ON D.id = Z.druh
-LEFT JOIN Ma_rad M ON M.druh = Z.druh
-WHERE M.id IS NULL AND D.nazev LIKE 'kacena';
+         JOIN Druhy D ON D.id = Z.druh
+         LEFT JOIN Ma_rad M ON M.druh = Z.druh
+WHERE M.id IS NULL
+  AND D.nazev LIKE 'kacena';
 
 -- 30. Všechny ošetřovatele, kteří neošetřují kachny
 SELECT Ote.id, Ote.jmeno
@@ -294,8 +312,7 @@ WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
                      FROM Osetruje Oje
                               JOIN Zvirata Z ON Oje.zvire = Z.id
                               JOIN Druhy D ON D.id = Z.druh
-                     WHERE D.nazev LIKE 'kacena'
-);
+                     WHERE D.nazev LIKE 'kacena');
 
 -- 31. Všechny ošetřovatele, kteří neošetřují kachny ani husy
 SELECT Ote.id, Ote.jmeno
@@ -304,8 +321,8 @@ WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
                      FROM Osetruje Oje
                               JOIN Zvirata Z ON Oje.zvire = Z.id
                               JOIN Druhy D ON D.id = Z.druh
-                     WHERE D.nazev LIKE 'husa' OR D.nazev LIKE 'kacena'
-);
+                     WHERE D.nazev LIKE 'husa'
+                        OR D.nazev LIKE 'kacena');
 
 -- 32. Všechny ošetřovatele, kteří neošetřují těžké osly
 SELECT Ote.id, Ote.jmeno
@@ -315,8 +332,7 @@ WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
                               JOIN Zvirata Z ON Oje.zvire = Z.id
                               JOIN Druhy D ON D.id = Z.druh
                      WHERE D.nazev LIKE 'osel'
-                       AND Z.vaha > 100
-);
+                       AND Z.vaha > 100);
 
 -- 33. Všechny těžké osly, které nikdo neošetřuje
 SELECT Z.id, Z.jmeno
