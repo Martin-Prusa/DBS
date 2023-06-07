@@ -217,11 +217,19 @@ HAVING COUNT(Z.id) > (SELECT AVG(c.c)
                             GROUP BY Z.druh) AS c);
 
 -- 19. Všechny ošetřovatele, kteří neošetřují staré holuby
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
+                     FROM Osetruje Oje
+                              JOIN Zvirata Z ON Oje.zvire = Z.id
+                              JOIN Druhy D ON D.id = Z.druh
+                     WHERE D.nazev LIKE 'holub'
+                       AND Z.narozen < '1950-01-01');
 
 -- 20. Všechna zvířata, která mají rádi pouze staří ošetřovatelé (narození v roce 1950 a starší)
 SELECT Z.id, Z.jmeno
 FROM Zvirata Z
-JOIN Ma_rad M on Z.druh = M.druh
+         JOIN Ma_rad M on Z.druh = M.druh
 WHERE Z.id NOT IN (SELECT DISTINCT Z.id
                    FROM Zvirata Z
                             JOIN Ma_rad M on Z.druh = M.druh
