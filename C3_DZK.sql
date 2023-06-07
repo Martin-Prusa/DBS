@@ -243,6 +243,15 @@ FROM Osetrovatele Ote
 -- Vahou druhu chápeme váhový průměr všech jeho zvířat. Nadprůměrně těžké druhy jsou takové druhy,
 -- jejichž váha je vyšší než průměr vah všech druhů. Druhy, které nemají žádné zvíře, do výpočtů
 -- nezahrnujte.
+SELECT D.id, D.nazev
+FROM Druhy D
+JOIN (SELECT Z.druh, AVG(Z.vaha) AS vaha
+FROM Zvirata Z
+GROUP BY Z.druh) AS avgVahy ON avgVahy.druh = D.id
+WHERE avgVahy.vaha > (SELECT AVG(prumerne.vaha)
+FROM (SELECT Z.druh, AVG(Z.vaha) AS vaha
+FROM Zvirata Z
+GROUP BY Z.druh) prumerne);
 
 -- 25. Všechny ošetřovatele, kteří ošetřují pouze pštrosy.
 SELECT Ote.id, Ote.jmeno
