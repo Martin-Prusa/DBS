@@ -246,18 +246,68 @@ FROM Osetrovatele Ote
 
 -- 25. Všechny ošetřovatele, kteří ošetřují pouze pštrosy.
 
+
 -- 26. Vyhynulé druhy (nemají žádné zvíře)
+SELECT D.nazev
+FROM Druhy D
+LEFT JOIN Zvirata Z ON Z.druh = D.id
+WHERE Z.id IS NULL;
 
 -- 27. Všechna zvířata, která nemá nikdo rád
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+LEFT JOIN Ma_rad M on Z.druh = M.druh
+WHERE M.id IS NULL;
 
 -- 28. Všechny ošetřovatele, kteří nikoho neošetřují
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+LEFT JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+WHERE Oje.id IS NULL;
 
 -- 29. Všechny kachny, které nemá nikdo rád
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+JOIN Druhy D ON D.id = Z.druh
+LEFT JOIN Ma_rad M ON M.druh = Z.druh
+WHERE M.id IS NULL AND D.nazev LIKE 'kacena';
 
 -- 30. Všechny ošetřovatele, kteří neošetřují kachny
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
+                     FROM Osetruje Oje
+                              JOIN Zvirata Z ON Oje.zvire = Z.id
+                              JOIN Druhy D ON D.id = Z.druh
+                     WHERE D.nazev LIKE 'kacena'
+);
 
 -- 31. Všechny ošetřovatele, kteří neošetřují kachny ani husy
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
+                     FROM Osetruje Oje
+                              JOIN Zvirata Z ON Oje.zvire = Z.id
+                              JOIN Druhy D ON D.id = Z.druh
+                     WHERE D.nazev LIKE 'husa' OR D.nazev LIKE 'kacena'
+);
 
 -- 32. Všechny ošetřovatele, kteří neošetřují těžké osly
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+WHERE Ote.id NOT IN (SELECT Oje.osetrovatel
+                     FROM Osetruje Oje
+                              JOIN Zvirata Z ON Oje.zvire = Z.id
+                              JOIN Druhy D ON D.id = Z.druh
+                     WHERE D.nazev LIKE 'osel'
+                       AND Z.vaha > 100
+);
 
 -- 33. Všechny těžké osly, které nikdo neošetřuje
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+         JOIN Druhy D ON D.id = Z.druh
+         LEFT JOIN Osetruje Oje ON Oje.zvire = Z.id
+WHERE Oje.id IS NULL
+  AND Z.vaha > 100
+  AND D.nazev LIKE 'osel';
