@@ -219,6 +219,15 @@ HAVING COUNT(Z.id) > (SELECT AVG(c.c)
 -- 19. Všechny ošetřovatele, kteří neošetřují staré holuby
 
 -- 20. Všechna zvířata, která mají rádi pouze staří ošetřovatelé (narození v roce 1950 a starší)
+SELECT Z.id, Z.jmeno
+FROM Zvirata Z
+JOIN Ma_rad M on Z.druh = M.druh
+WHERE Z.id NOT IN (SELECT DISTINCT Z.id
+                   FROM Zvirata Z
+                            JOIN Ma_rad M on Z.druh = M.druh
+                            JOIN Osetrovatele Ote ON Ote.id = M.osetrovatel
+                   WHERE Ote.narozen >= '1951-01-01');
+
 
 -- 21. “Prodatelná” zvířata
 -- (nejmladší zvíře každého druhu, s výjimkou těch, kde by populace po prodeji klesla pod 10
