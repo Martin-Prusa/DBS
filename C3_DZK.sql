@@ -245,7 +245,13 @@ FROM Osetrovatele Ote
 -- nezahrnujte.
 
 -- 25. Všechny ošetřovatele, kteří ošetřují pouze pštrosy.
-
+SELECT Ote.id, Ote.jmeno
+FROM Osetrovatele Ote
+JOIN Osetruje Oje ON Oje.osetrovatel = Ote.id
+JOIN Zvirata Z ON Z.id = Oje.zvire
+LEFT JOIN Druhy D ON D.id = Z.druh AND D.nazev NOT LIKE 'pstros'
+GROUP BY Ote.id
+HAVING COUNT(D.id) = 0;
 
 -- 26. Vyhynulé druhy (nemají žádné zvíře)
 SELECT D.nazev
